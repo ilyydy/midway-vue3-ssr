@@ -54,7 +54,9 @@
     "dev:view": "vite view",
     "preview:view": "vite view preview --port 4173",
     "build:view": "run-p type-check build-only:view",
-    "build-only:view": "vite build view --emptyOutDir",
+    "build-only:view": "run-p build:view:client build:view:server",
+    "build:view:client": "vite build view --outDir ../public/client --ssrManifest",
+    "build:view:server": "vite build view --outDir ../public/server --ssr src/server",
     "type-check": "vue-tsc -p view/tsconfig.json --noEmit",
     "lint:view": "eslint view -c ./view/.eslintrc.cjs --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix"
   },

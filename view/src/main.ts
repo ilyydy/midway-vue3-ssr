@@ -1,14 +1,27 @@
-import { createApp } from "vue";
-import { createPinia } from "pinia";
+// 创建 app，在服务端和客户端间共享
+import { createSSRApp } from 'vue';
+import { createPinia } from 'pinia';
 
-import App from "./App.vue";
-import router from "./router";
+import App from './App.vue';
+import { createRouter } from './router';
 
-import "./assets/main.css";
+import './assets/main.css';
 
-const app = createApp(App);
+// 每次请求时调用创建一个新的 app
+export function createApp() {
+  const app = createSSRApp(App);
 
-app.use(createPinia());
-app.use(router);
+  // 对每个请求都创建新的 router 和 pinia
+  const router = createRouter();
+  const pinia = createPinia();
 
-app.mount("#app");
+  app.use(router);
+  app.use(pinia);
+
+  app.config.errorHandler = (err, instance, info) => {
+    // 向追踪服务报告错误
+    console.log('app error', err, info, instance);
+  };
+
+  return { app, router, pinia };
+}
