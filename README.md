@@ -1,4 +1,4 @@
-# my_midway_project
+# midway-vue3-ssr
 
 ## QuickStart
 
