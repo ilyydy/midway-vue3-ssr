@@ -541,3 +541,51 @@ package.json 新增 1 条 scripts 命令，同时构建前后端
 ```
 
 运行 `npm run build`，再运行 `npm run start` 会启动生产环境的服务，访问 <http://localhost:7001/> 和 <http://localhost:7001/about> 可以看到页面，查看浏览器发出的请求，可以看到请求了 public/client 下的静态资源
+
+## 优化
+
+### 不同请求类型增加请求前缀
+
+为了方便区分请求的是 API 接口，页面还是其他静态资源，一般使用不同的路径前缀。如 API 接口以 /api 开头，页面以 /view 开头，静态资源以 /public 开头
+
+API 接口公共前缀通过 @Controller 配置即可
+
+访问页面的 controller 方法的访问路径增加 /view/ 前缀，考虑访问方便，应该支持访问根路径 / 自动转到 /view
+
+```ts
+@Get('/')
+@Get('/view')
+@Get('/view/about')
+```
+
+因为请求路径发生了变化，所以需要修改 vite.server.ts 的 convertPathToFrontRoute 方法，让请求路径转为正确的前端路由，即请求 / 和 /view 访问前端路由 /，请求 /view/about 访问前端路由 /about
+
+```ts
+function convertPathToFrontRoute(path: string) {
+  return path.replace(new RegExp('/view/'), '/');
+}
+```
+
+同时修改 view/src/router/index.ts，让 Vue-Router 历史记录增加前缀
+
+```ts
+    history: import.meta.env.SSR
+      ? createMemoryHistory("/view")
+      : createWebHistory("/view"),
+```
+
+静态资源公共前缀可在 vite.config.ts 增加：
+
+```ts
+base: "/public/",
+```
+
+同时修改 Midway 的静态资源服务配置，prefix 为 '/public'
+
+```ts
+// src/config/config.prod.ts
+
+prefix: '/public',
+```
+
+此时启动服务，可以发现访问 <http://localhost:7001> 会自动跳转到 <http://localhost:7001/view/>，也可以直接访问 <http://localhost:7001/view/about>，同时请求静态资源带上了 /public 前缀

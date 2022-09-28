@@ -10,7 +10,8 @@ export class HomeController {
 
   // 前端有 / 和 /about 两个路由
   @Get('/')
-  @Get('/about')
+  @Get('/view')
+  @Get('/view/about')
   @ContentType('html')
   async home(): Promise<string> {
     return await render(this.ctx);

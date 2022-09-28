@@ -7,7 +7,7 @@ export default (appInfo: MidwayAppInfo) => {
     staticFile: {
       dirs: {
         default: {
-          prefix: '/',
+          prefix: '/public',
           dir: join(appInfo.appDir, 'public', 'client'),
         },
       },

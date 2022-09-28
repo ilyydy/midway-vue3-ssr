@@ -8,7 +8,7 @@ import type { ViteDevServer } from 'vite';
 
 // 将请求路径转换为对应的前端路由
 function convertPathToFrontRoute(path: string) {
-  return path;
+  return path.replace(new RegExp('/view/'), '/');
 }
 
 let _viteServer: ViteDevServer | undefined;

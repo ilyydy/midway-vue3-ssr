@@ -5,9 +5,10 @@ import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ command, mode, ssrBuild }) => ({
+  base: "/public/",
   build: {
-    outDir: '../public',
+    outDir: "../public",
     emptyOutDir: true,
   },
   plugins: [vue(), vueJsx()],
@@ -17,6 +18,6 @@ export default defineConfig({
     },
   },
   ssr: {
-    format: 'cjs',
+    format: "cjs",
   },
-});
+}));
