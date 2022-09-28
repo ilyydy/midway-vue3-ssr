@@ -962,3 +962,13 @@ export {}
     }
   }
 ```
+
+## 参考
+
+* [Vite setup catalogue](https://github.com/sapphi-red/vite-setup-catalogue)
+* [vue3 服务端渲染 (SSR)](https://cn.vuejs.org/guide/scaling-up/ssr.html)
+* [vue2 服务器端渲染指南](https://juejin.cn/post/7109271896729845774)
+* [vite 服务端渲染](https://cn.vitejs.dev/guide/ssr.html)
+* [vue router SSR](https://router.vuejs.org/zh/guide/migration/index.html#%E6%96%B0%E7%9A%84-history-%E9%85%8D%E7%BD%AE%E5%8F%96%E4%BB%A3-mode)
+* [pinia SSR](https://pinia.vuejs.org/ssr/)
+* [敲下命令后，Vite 做了哪些事？](https://juejin.cn/post/7109271896729845774)
