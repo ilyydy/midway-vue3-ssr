@@ -791,3 +791,154 @@ const { app, router, pinia } = createApp(renderType);
 ```
 
 再次启动服务访问 <http://localhost:7001/?renderType=csr> 可以看到告警不再出现
+
+### 抽取公共变量和类型
+
+前后端有不少公共的变量（比如页面、静态资源公共前缀，ssr 和 csr 等）和类型（比如 API JSON 响应的数据类型），这些我们可以统一放在一个目录中，前后端代码共享
+
+在 src 下新建一个 share 目录，constant.ts 放置常量。服务端代码可直接使用按需替换
+
+```ts
+// constant.ts
+/**
+ * @file 服务端、浏览器端共用的变量，注意兼容性，不包含敏感信息
+ */
+/** */
+
+export const API_ROUTE_PREFIX = '/api';
+export const VIEW_ROUTE_PREFIX = '/view';
+export const STATIC_RESOURCE_ROUTE_PREFIX = '/public';
+
+export const FRONT_SOURCE_DIR_NAME = 'view';
+export const FRONT_BUILD_DIR_NAME = 'public';
+export const FRONT_BUILD_CLIENT_DIR_NAME = 'client';
+export const FRONT_BUILD_SERVER_DIR_NAME = 'server';
+export const SRC_SERVER_ENTRY_PATH = '/src/server.ts';
+export const BUILD_SERVER_ENTRY = 'server.js';
+export const ENTRY_HTML = 'index.html';
+export const MANIFEST = 'ssr-manifest.json';
+export const CSR = 'csr';
+export const SSR = 'ssr';
+```
+
+前端为了方便 import 设置路径别名，修改 view/tsconfig.json
+
+```json
+{
+  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@share/*": ["../src/share/*"]
+    }
+  }
+}
+```
+
+修改 view/vite.config.ts
+
+```ts
+import { fileURLToPath, URL } from "node:url";
+import { join } from "node:path";
+
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import vueJsx from "@vitejs/plugin-vue-jsx";
+import { STATIC_RESOURCE_ROUTE_PREFIX } from "../src/share/constant";
+
+// https://vitejs.dev/config/
+export default defineConfig(({ command, mode, ssrBuild }) => ({
+  base: STATIC_RESOURCE_ROUTE_PREFIX + "/",
+  build: {
+    outDir: "../public",
+    emptyOutDir: true,
+  },
+  plugins: [vue(), vueJsx()],
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@share": fileURLToPath(
+        new URL(join("../src", "share"), import.meta.url)
+      ),
+    },
+  },
+  ssr: {
+    format: "cjs",
+  },
+}));
+```
+
+对于类型共享，新建 typings/index.d.ts，放置全局可用的类型
+
+```ts
+/**
+ * @file 声明全局可用的类型，扩展依赖的类型
+ */
+/* */
+
+declare global {
+  type RenderType = 'csr' | 'ssr';
+
+  interface RenderResponse {
+    html: string;
+    preloadLinks: string;
+    appInfo: any;
+    pinia: string;
+  }
+}
+
+export {}
+```
+
+为了在服务端使用，配置 tsconfig.json
+
+```json
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "inlineSourceMap":true,
+    "noImplicitThis": true,
+    "noUnusedLocals": false,
+    "stripInternal": true,
+    "skipLibCheck": true,
+    "pretty": true,
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": [ "./typings", "./node_modules/@types"],
+    "outDir": "dist"
+  },
+  "exclude": [
+    "dist",
+    "node_modules",
+    "test",
+    "view"
+  ],
+  "include": [
+    "src",
+    "typings"
+  ]
+}
+```
+
+为了在前端使用，配置 view/tsconfig.json
+
+```json
+{
+  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "../typings"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@share/*": ["../src/share/*"]
+    }
+  }
+}
+```

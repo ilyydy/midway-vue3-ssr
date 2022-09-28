@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import * as constant from './share/constant';
 
 import type { Application, Context } from '@midwayjs/koa';
 // vite 是 dev 依赖，生产环境不存在，所以用 import type 形式
@@ -8,7 +9,7 @@ import type { ViteDevServer } from 'vite';
 
 // 将请求路径转换为对应的前端路由
 function convertPathToFrontRoute(path: string) {
-  return path.replace(new RegExp('/view/'), '/');
+  return path.replace(new RegExp(constant.VIEW_ROUTE_PREFIX + '/'), '/');
 }
 
 let _viteServer: ViteDevServer | undefined;
@@ -23,7 +24,7 @@ export async function getOrCreateViteServer(app: Application) {
 
   const viteServer = await vite.createServer({
     logLevel: 'info',
-    root: 'view', // 需要指定 view 为根目录
+    root: constant.FRONT_SOURCE_DIR_NAME, // 需要指定 view 为根目录
     server: {
       middlewareMode: true,
     },
@@ -43,7 +44,7 @@ export async function getOrCreateViteServer(app: Application) {
 
 export async function csrHtml(ctx: Context, template: string) {
   const html = template
-    .replace('"<!--render-type-->"', '"csr"')
+    .replace('"<!--render-type-->"', `'${constant.CSR}'`)
     .replace('"<!--app-pinia-->"', '""')
     .replace('<!--preload-links-->', '');
 
@@ -54,12 +55,12 @@ export async function csrHtml(ctx: Context, template: string) {
 export async function ssrHtml(
   ctx: Context,
   template: string,
-  renderResponse: any
+  renderResponse: RenderResponse
 ) {
   const { html: appHtml, preloadLinks, appInfo, pinia } = renderResponse;
 
   const html = template
-    .replace('"<!--render-type-->"', '"ssr"')
+    .replace('"<!--render-type-->"', `'${constant.SSR}'`)
     .replace('"<!--app-pinia-->"', pinia)
     .replace('<!--preload-links-->', preloadLinks);
 
@@ -72,7 +73,11 @@ export async function devRender(ctx: Context) {
   try {
     // 读取 view 目录下的 index.html
     template = await fs.promises.readFile(
-      path.join(ctx.app.getAppDir(), 'view', 'index.html'),
+      path.join(
+        ctx.app.getAppDir(),
+        constant.FRONT_SOURCE_DIR_NAME,
+        constant.ENTRY_HTML
+      ),
       'utf-8'
     );
   } catch (error: any) {
@@ -80,7 +85,7 @@ export async function devRender(ctx: Context) {
     ctx.throw('template error');
   }
 
-  if (ctx.query.renderType === 'csr') {
+  if (ctx.query.renderType === constant.CSR) {
     return csrHtml(ctx, template);
   }
 
@@ -93,7 +98,9 @@ export async function devRender(ctx: Context) {
     // 加载 server.ts 入口文件
     // vite.ssrLoadModule 将自动转换你的 ESM 源码使之可以在 Node.js 中运行！无需打包
     // 并提供类似 HMR 的根据情况随时失效
-    const { render } = await viteServer.ssrLoadModule('/src/server.ts');
+    const { render } = await viteServer.ssrLoadModule(
+      constant.SRC_SERVER_ENTRY_PATH
+    );
     // 获得 app、预加载的各类资源等渲染需要的数据
     const response = await render(convertPathToFrontRoute(ctx.url), {});
 
@@ -120,7 +127,12 @@ export async function commonRender(ctx: Context) {
       template ||
       // 读取构建结果中的 html
       (await fs.promises.readFile(
-        path.join(appDir, 'public', 'client', 'index.html'),
+        path.join(
+          appDir,
+          constant.FRONT_BUILD_DIR_NAME,
+          constant.FRONT_BUILD_CLIENT_DIR_NAME,
+          constant.ENTRY_HTML
+        ),
         'utf-8'
       ));
   } catch (error: any) {
@@ -128,7 +140,7 @@ export async function commonRender(ctx: Context) {
     ctx.throw('template error');
   }
 
-  if (ctx.query.renderType === 'csr') {
+  if (ctx.query.renderType === constant.CSR) {
     return csrHtml(ctx, template);
   }
 
@@ -139,7 +151,12 @@ export async function commonRender(ctx: Context) {
       manifest ||
       JSON.parse(
         await fs.promises.readFile(
-          path.join(appDir, 'public', 'client', 'ssr-manifest.json'),
+          path.join(
+            appDir,
+            constant.FRONT_BUILD_DIR_NAME,
+            constant.FRONT_BUILD_CLIENT_DIR_NAME,
+            constant.MANIFEST
+          ),
           'utf-8'
         )
       );
@@ -147,8 +164,17 @@ export async function commonRender(ctx: Context) {
     // 加载构建后的 server.js 入口文件
     renderFunc =
       renderFunc ||
-      (await import(path.join(appDir, 'public', 'server', 'server.js'))).render;
-    const response: any = await renderFunc(
+      (
+        await import(
+          path.join(
+            appDir,
+            constant.FRONT_BUILD_DIR_NAME,
+            constant.FRONT_BUILD_SERVER_DIR_NAME,
+            constant.BUILD_SERVER_ENTRY
+          )
+        )
+      ).render;
+    const response: RenderResponse = await renderFunc(
       convertPathToFrontRoute(ctx.url),
       manifest
     );

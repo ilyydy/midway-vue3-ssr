@@ -1,5 +1,6 @@
 import { Controller, Get, Inject, ContentType } from '@midwayjs/decorator';
 import { render } from '../vite.server';
+import { VIEW_ROUTE_PREFIX } from '../share/constant';
 
 import type { Context } from '@midwayjs/koa';
 
@@ -10,7 +11,7 @@ export class HomeController {
 
   @Get('/')
   @Get('/404')
-  @Get('/view/**')
+  @Get(`${VIEW_ROUTE_PREFIX}/**`)
   @ContentType('html')
   async home(): Promise<string> {
     return await render(this.ctx);
