@@ -7,6 +7,7 @@ import * as staticFile from '@midwayjs/static-file';
 import { DefaultErrorFilter } from './filter/default.filter';
 import { NotFoundFilter } from './filter/notfound.filter';
 import { ReportMiddleware } from './middleware/report.middleware';
+import { getOrCreateViteServer } from './vite.server';
 
 @Configuration({
   imports: [
@@ -32,5 +33,11 @@ export class ContainerLifeCycle {
     this.app.useMiddleware([ReportMiddleware]);
     // add filter
     this.app.useFilter([NotFoundFilter, DefaultErrorFilter]);
+  }
+
+  async onServerReady(): Promise<void> {
+    if (this.app.getEnv() === 'dev' || this.app.getEnv() === 'local') {
+      await getOrCreateViteServer(this.app);
+    }
   }
 }

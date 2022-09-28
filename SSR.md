@@ -6,6 +6,7 @@
 
 先使用命令 `npm init midway` 初始化一个 Midway koa-v3 标准项目，项目根目录结构如下：
 
+```shell
 ├── README.md
 ├── README.zh-CN.md
 ├── bootstrap.js
@@ -14,6 +15,7 @@
 ├── src
 ├── test
 └── tsconfig.json
+```
 
 前端代码我选择放在项目根目录下的 view 目录，在其中初始化一个 Vite 的 Vue3 项目
 
@@ -31,6 +33,7 @@ npm init vue@latest
 
 view 的根目录结构如下：
 
+```shell
 ├── README.md
 ├── env.d.ts
 ├── index.html
@@ -40,6 +43,7 @@ view 的根目录结构如下：
 ├── tsconfig.config.json
 ├── tsconfig.json
 └── vite.config.ts
+```
 
 将前端 package.json 的依赖和 scripts 命令按需移动到项目根目录 package.json，重复的 scripts 命令用 midway 和 view 区分前后端，前端一些命令指定 view 目录，合并后如下：
 
@@ -941,4 +945,20 @@ export {}
     }
   }
 }
+```
+
+### ViteDevServer 创建时机
+
+本地 dev 模式启动服务后，修改前端 vue 文件会触发 Vite 的热更新。修改 服务端 ts 代码会触发 Midway 服务的自动重启功能。这时会发现 Vite 的热更新能力失效，并且浏览器一直在请求 <http://localhost:24678/public/>，手动刷新页面后又恢复正常
+
+24678 是 Vite 的 websocket 服务的端口。当访问页面相关的路径时会调用 getOrCreateViteServer 创建 ViteDevServer，同时创建 websocket 服务。然后页面在浏览器加载， Vite 在浏览器创建 websocket 客户端和这个 websocket 服务交互，实现热更新。当 Midway 服务重启后，之前的 ViteDevServer 和 websocket 服务都不再存在，浏览器的 websocket 客户端断开与 websocket 服务的连接，然后不断请求 <http://localhost:24678/public/>，尝试重连。然而如果没有再次访问页面相关的路径，ViteDevServer 和 websocket 服务一直未被创建，websocket 客户端一直无法连接上，最终导致热更新失效
+
+所以为了保持热更新能力，Midway 服务重启后应该立即创建 ViteDevServer。可以通过修改 src/configuration.ts 实现：
+
+```ts
+  async onServerReady(): Promise<void> {
+    if (this.app.getEnv() === 'dev' || this.app.getEnv() === 'local') {
+      await getOrCreateViteServer(this.app);
+    }
+  }
 ```
