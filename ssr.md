@@ -679,3 +679,115 @@ controller 方法上增加一个 /404 路径，这样重定向到 /404 时会进
 ```ts
 @Get('/404')
 ```
+
+### 同时支持 SSR 和 CSR
+
+有些时候我们想同时支持 SSR 和 CSR，可以根据请求参数（比如 query 的 renderType）来选择模式，默认用 SSR，当 renderType 是 "csr" 是则用 CSR
+
+首先在 src/lib/vite.server.ts 中增加一个客户端渲染的 csrHtml 函数，用于将 html 中的占位符替换掉
+
+```ts
+export async function csrHtml(ctx: Context, template: string) {
+  const html = template
+    .replace('"<!--app-pinia-->"', '""')
+    .replace('<!--preload-links-->', '');
+
+  return html.replace('<!--app-html-->', '');
+}
+```
+
+然后在 devRender 和 commonRender 分别增加根据 renderType 判断使用哪种模式的逻辑
+
+```ts
+  if (ctx.query.renderType === 'csr') {
+    return csrHtml(ctx, template);
+  }
+```
+
+启动服务访问 <http://localhost:7001/?renderType=csr> 可以看到页面，但是会发现浏览器控制台有警告：
+
+```log
+runtime-core.esm-bundler.js:38 [Vue warn]: Attempting to hydrate existing markup but container is empty. Performing full mount instead.
+```
+
+这是因为 view/src/client.ts 中的 app 还是用 createSSRApp 创建的，执行了客户端激活。所以这里应该根据选择的模式用 createApp 或 createSSRApp 来创建 App。而渲染模式可以通过 csrHtml 或 ssrHtml 加到 html 中，客户端再读取出来
+
+```ts
+export async function csrHtml(ctx: Context, template: string) {
+  const html = template
+    .replace('"<!--render-type-->"', '"csr"')
+    .replace('"<!--app-pinia-->"', '""')
+    .replace('<!--preload-links-->', '');
+
+  return html.replace('<!--app-html-->', '');
+}
+
+// 服务端渲染 html，将需要预加载的各类资源、pinia 状态、app 加到页面上
+export async function ssrHtml(
+  ctx: Context,
+  template: string,
+  renderResponse: any
+) {
+  const { html: appHtml, preloadLinks, appInfo, pinia } = renderResponse;
+
+  const html = template
+    .replace('"<!--render-type-->"', '"ssr"')
+    .replace('"<!--app-pinia-->"', pinia)
+    .replace('<!--preload-links-->', preloadLinks);
+
+  return html.replace('<!--app-html-->', appHtml);
+}
+```
+
+index.html 加上这个占位符：
+
+```html
+window.__renderType = "<!--render-type-->";
+```
+
+修改创建 app 的函数
+
+```ts
+// view/src/main.ts
+// 创建 app，在服务端和客户端间共享
+import { createSSRApp, createApp as createCSRApp } from 'vue';
+import { createPinia } from 'pinia';
+
+import App from './App.vue';
+import { createRouter } from './router';
+
+import './assets/main.css';
+
+// 每次请求时调用创建一个新的 app
+export function createApp(renderType: 'csr' | 'ssr' = 'ssr') {
+  const app = renderType === 'ssr' ? createSSRApp(App) : createCSRApp(App);
+
+  // 对每个请求都创建新的 router 和 pinia
+  const router = createRouter();
+  const pinia = createPinia();
+
+  app.use(router);
+  app.use(pinia);
+
+  app.config.errorHandler = (err, instance, info) => {
+    // 向追踪服务报告错误
+    console.log('app error', err, info, instance);
+  };
+
+  return { app, router, pinia };
+}
+```
+
+client.ts 中读取 __renderType 决定 renderType
+
+```ts
+// view/src/client.ts
+let renderType = (window as any).__renderType;
+if (renderType !== 'csr' && renderType !== 'ssr') {
+  renderType = 'ssr';
+}
+
+const { app, router, pinia } = createApp(renderType);
+```
+
+再次启动服务访问 <http://localhost:7001/?renderType=csr> 可以看到告警不再出现

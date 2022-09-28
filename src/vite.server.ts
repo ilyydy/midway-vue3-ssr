@@ -41,6 +41,15 @@ export async function getOrCreateViteServer(app: Application) {
   return viteServer;
 }
 
+export async function csrHtml(ctx: Context, template: string) {
+  const html = template
+    .replace('"<!--render-type-->"', '"csr"')
+    .replace('"<!--app-pinia-->"', '""')
+    .replace('<!--preload-links-->', '');
+
+  return html.replace('<!--app-html-->', '');
+}
+
 // 服务端渲染 html，将需要预加载的各类资源、pinia 状态、app 加到页面上
 export async function ssrHtml(
   ctx: Context,
@@ -50,6 +59,7 @@ export async function ssrHtml(
   const { html: appHtml, preloadLinks, appInfo, pinia } = renderResponse;
 
   const html = template
+    .replace('"<!--render-type-->"', '"ssr"')
     .replace('"<!--app-pinia-->"', pinia)
     .replace('<!--preload-links-->', preloadLinks);
 
@@ -68,6 +78,10 @@ export async function devRender(ctx: Context) {
   } catch (error: any) {
     ctx.logger.error('read template error', error);
     ctx.throw('template error');
+  }
+
+  if (ctx.query.renderType === 'csr') {
+    return csrHtml(ctx, template);
   }
 
   let viteServer: ViteDevServer | undefined;
@@ -112,6 +126,10 @@ export async function commonRender(ctx: Context) {
   } catch (error: any) {
     ctx.logger.error('read template error', error);
     ctx.throw('template error');
+  }
+
+  if (ctx.query.renderType === 'csr') {
+    return csrHtml(ctx, template);
   }
 
   // 读取 ssr-manifest.json 清单，传递到 src/server.ts 导出的 render 函数中

@@ -1,6 +1,11 @@
 import { createApp } from "./main";
 
-const { app, router, pinia } = createApp();
+let renderType = (window as any).__renderType;
+if (renderType !== 'csr' && renderType !== 'ssr') {
+  renderType = 'ssr';
+}
+
+const { app, router, pinia } = createApp(renderType);
 
 // pinia 的状态激活
 // 服务端渲染时将 pinia 的状态挂载到 window.__pinia 上
