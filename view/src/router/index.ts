@@ -24,6 +24,11 @@ export function createRouter() {
         // which is lazy-loaded when the route is visited.
         component: () => import("../views/AboutView.vue"),
       },
+      {
+        name: "notFound",
+        path: "/:pathMatch(.*)*",
+        component: () => import("../views/NotFoundView.vue"),
+      },
     ],
   });
 }

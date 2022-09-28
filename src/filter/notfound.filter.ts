@@ -6,6 +6,12 @@ import { Context } from '@midwayjs/koa';
 export class NotFoundFilter {
   async catch(err: MidwayHttpError, ctx: Context) {
     // 404 错误会到这里
-    ctx.redirect('/404.html');
+    if (ctx.url.startsWith('/api')) {
+      // 返回 JSON
+      ctx.body = { code: 404 };
+    } else {
+      // 重定向到 /404
+      ctx.redirect('/404');
+    }
   }
 }

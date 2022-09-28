@@ -589,3 +589,93 @@ prefix: '/public',
 ```
 
 此时启动服务，可以发现访问 <http://localhost:7001> 会自动跳转到 <http://localhost:7001/view/>，也可以直接访问 <http://localhost:7001/view/about>，同时请求静态资源带上了 /public 前缀
+
+### 动态路由和 404
+
+请求页面存在两个问题：1. controller 方法上写死了前端的路由，不能动态扩展 2. 访问不存在的页面时应返回 404 页面，而访问不存在的 API 接口时应返回 JSON 响应，两种没有区分开
+
+对于第一个问题，因为除了根路径，访问页面都以 /view 开头，所以可以 controller 方法上使用通配路由
+
+```ts
+@Get('/view/**')
+```
+
+对于第二个问题，因为 API 接口以 /api 开头，所以当服务端捕获到 404 时如果请求路径以 /api 开头，则返回 JSON 响应，否则返回 404 页面
+
+前端加一个简单的 NotFoundView.vue 页面组件，并加到 Vue-Router 中作为兜底处理
+
+```vue
+<template>
+  <div title="404" sub-title="Sorry, request error">
+    <router-link to="/">
+      <button>返回首页</button>
+    </router-link>
+  </div>
+</template>
+```
+
+```ts
+// view/src/router/index.ts
+import {
+  createRouter as _createRouter,
+  createWebHistory,
+  createMemoryHistory,
+} from "vue-router";
+import HomeView from "../views/HomeView.vue";
+
+export function createRouter() {
+  return _createRouter({
+    history: import.meta.env.SSR
+      ? createMemoryHistory("/view")
+      : createWebHistory("/view"),
+    routes: [
+      {
+        path: "/",
+        name: "home",
+        component: HomeView,
+      },
+      {
+        path: "/about",
+        name: "about",
+        // route level code-splitting
+        // this generates a separate chunk (About.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import("../views/AboutView.vue"),
+      },
+      {
+        name: "notFound",
+        path: "/:pathMatch(.*)*",
+        component: () => import("../views/NotFoundView.vue"),
+      },
+    ],
+  });
+}
+```
+
+服务端修改 notfound.filter.ts，处理不同情况的 404，并在 src/configuration.ts 中启用 filter
+
+```ts
+import { Catch } from '@midwayjs/decorator';
+import { httpError, MidwayHttpError } from '@midwayjs/core';
+import { Context } from '@midwayjs/koa';
+
+@Catch(httpError.NotFoundError)
+export class NotFoundFilter {
+  async catch(err: MidwayHttpError, ctx: Context) {
+    // 404 错误会到这里
+    if (ctx.url.startsWith('/api')) {
+      // 返回 JSON
+      ctx.body = { code: 404 };
+    } else {
+      // 重定向到 /404
+      ctx.redirect('/404');
+    }
+  }
+}
+```
+
+controller 方法上增加一个 /404 路径，这样重定向到 /404 时会进行服务端渲染，做前端路由匹配，而前端路由中没有 /404 的路面，所以最后匹配到兜底的 notFound 路由，返回 404 页面
+
+```ts
+@Get('/404')
+```
