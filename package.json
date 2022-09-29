@@ -24,6 +24,7 @@
     "@types/jest": "^26.0.10",
     "@types/koa": "^2.13.4",
     "@types/node": "14",
+    "@types/uuid": "^8.3.4",
     "@vitejs/plugin-vue": "^3.0.3",
     "@vitejs/plugin-vue-jsx": "^2.0.1",
     "@vue/eslint-config-prettier": "^7.0.0",
@@ -62,16 +63,19 @@
     "build:view:client": "vite build view --outDir ../public/client --ssrManifest",
     "build:view:server": "vite build view --outDir ../public/server --ssr src/server",
     "type-check": "vue-tsc -p view/tsconfig.json --noEmit",
-    "lint:view": "eslint view -c ./view/.eslintrc.cjs --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix"
+    "lint:view": "eslint view -c ./view/.eslintrc.cjs --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "clean": "midway-bin clean"
   },
   "midway-bin-clean": [
     ".vscode/.tsbuildinfo",
-    "dist"
+    "dist",
+    "public",
+    "logs"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/ilyydy/midway-vue3-ssr"
   },
-  "author": "anonymous",
+  "author": "zhangchi@bigo.sg",
   "license": "MIT"
 }

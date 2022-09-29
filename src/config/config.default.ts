@@ -1,5 +1,6 @@
-import path from 'path';
+import { httpError } from '@midwayjs/core';
 import { getCurrentMainApp } from '@midwayjs/core';
+import path from 'path';
 
 import { X_REQUEST_ID, X_TRANSACTION_ID } from '../share/constant';
 
@@ -62,6 +63,18 @@ export default (appInfo: MidwayAppInfo) => {
             } ${label ? `[${label}] ` : ''}${info.labelText}${info.message}`;
           },
         },
+      },
+    },
+
+    bodyParser: {
+      enableTypes: ['json', 'form', 'text', 'xml'],
+      formLimit: '1mb',
+      jsonLimit: '1mb',
+      textLimit: '1mb',
+      xmlLimit: '1mb',
+      onerror(err: Error, ctx: Context) {
+        ctx.logger.warn('bodyParser error', err);
+        throw new httpError.BadRequestError(err.message);
       },
     },
   } as MidwayConfig;

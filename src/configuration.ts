@@ -6,8 +6,7 @@ import { join } from 'path';
 import * as staticFile from '@midwayjs/static-file';
 import { AsyncLocalStorage } from 'async_hooks';
 
-import { DefaultErrorFilter } from './filter/default.filter';
-import { NotFoundFilter } from './filter/notfound.filter';
+import { filterList } from './filter';
 import { middlewares } from './middleware';
 import { getOrCreateViteServer } from './lib/vite.server';
 import { isDev } from './lib/util';
@@ -42,7 +41,7 @@ export class ContainerLifeCycle implements ILifeCycle {
     // add middleware
     this.app.useMiddleware(middlewares);
     // add filter
-    this.app.useFilter([NotFoundFilter, DefaultErrorFilter]);
+    this.app.useFilter(filterList);
 
     this.app.asyncLocalStorage = new AsyncLocalStorage();
     this.app.getTransactionInfo = () => {
