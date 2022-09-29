@@ -8,7 +8,7 @@ import { AsyncLocalStorage } from 'async_hooks';
 
 import { DefaultErrorFilter } from './filter/default.filter';
 import { NotFoundFilter } from './filter/notfound.filter';
-import { ReportMiddleware } from './middleware/report.middleware';
+import { middlewares } from './middleware';
 import { getOrCreateViteServer } from './vite.server';
 
 import type { ILogger } from '@midwayjs/logger';
@@ -38,7 +38,7 @@ export class ContainerLifeCycle implements ILifeCycle {
 
   async onReady() {
     // add middleware
-    this.app.useMiddleware([ReportMiddleware]);
+    this.app.useMiddleware(middlewares);
     // add filter
     this.app.useFilter([NotFoundFilter, DefaultErrorFilter]);
   }

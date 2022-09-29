@@ -3,12 +3,15 @@
  */
 /** */
 import '@midwayjs/logger';
-import { IMidwayBaseApplication } from '@midwayjs/core';
-import { NextFunction, Context, Application } from '@midwayjs/koa';
+import '@midwayjs/core';
+import '@midwayjs/koa';
 import { AsyncLocalStorage } from 'async_hooks';
+import { X_TRANSACTION_ID } from '../src/share/constant';
 
 declare module '@midwayjs/core' {
-  interface Context {}
+  interface Context {
+    [X_TRANSACTION_ID]: string;
+  }
 
   interface IMidwayBaseApplication {
     asyncLocalStorage: AsyncLocalStorage<{ [index: string | symbol]: any }>;
