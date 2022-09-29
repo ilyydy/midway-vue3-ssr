@@ -17,3 +17,17 @@ export const ENTRY_HTML = 'index.html';
 export const MANIFEST = 'ssr-manifest.json';
 export const CSR = 'csr';
 export const SSR = 'ssr';
+
+export const X_TRANSACTION_ID = 'X-Transaction-Id';
+export const X_RESPONSE_TIME = 'X-Response-Time';
+export const X_REQUEST_ID = 'X-Request-Id';
+
+export const CONTENT_DISPOSITION = 'content-disposition';
+export const CONTENT_LENGTH = 'content-length';
+export const CONTENT_TYPE = 'content-type';
+export const CONTENT_TYPE_MAP = {
+  stream: 'application/octet-stream',
+  json: 'application/json',
+  html: 'text/html',
+  text: 'text/plain;',
+} as const;
