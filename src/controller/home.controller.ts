@@ -1,4 +1,5 @@
 import { Controller, Get, Inject, ContentType } from '@midwayjs/decorator';
+
 import { render } from '../vite.server';
 import { VIEW_ROUTE_PREFIX } from '../share/constant';
 
