@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
+
 import * as constant from '../share/constant';
 
 import type { Application, Context } from '@midwayjs/koa';

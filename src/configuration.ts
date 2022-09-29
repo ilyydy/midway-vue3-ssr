@@ -10,6 +10,8 @@ import { DefaultErrorFilter } from './filter/default.filter';
 import { NotFoundFilter } from './filter/notfound.filter';
 import { middlewares } from './middleware';
 import { getOrCreateViteServer } from './lib/vite.server';
+import { isDev } from './lib/util';
+import { X_REQUEST_ID, X_TRANSACTION_ID } from './share/constant';
 
 import type { ILogger } from '@midwayjs/logger';
 import type { ILifeCycle } from '@midwayjs/core';
@@ -41,14 +43,21 @@ export class ContainerLifeCycle implements ILifeCycle {
     this.app.useMiddleware(middlewares);
     // add filter
     this.app.useFilter([NotFoundFilter, DefaultErrorFilter]);
+
+    this.app.asyncLocalStorage = new AsyncLocalStorage();
+    this.app.getTransactionInfo = () => {
+      const store = this.app.asyncLocalStorage.getStore() || {};
+      return {
+        transactionId: store[X_TRANSACTION_ID],
+        requestId: store[X_REQUEST_ID],
+      };
+    };
   }
 
   async onServerReady(): Promise<void> {
     this.logger.info('onServerReady');
-    if (this.app.getEnv() === 'dev' || this.app.getEnv() === 'local') {
+    if (isDev(this.app.getEnv())) {
       await getOrCreateViteServer(this.app);
     }
-
-    this.app.asyncLocalStorage = new AsyncLocalStorage();
   }
 }

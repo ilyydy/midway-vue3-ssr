@@ -19,13 +19,14 @@ export class TransactionIdMiddleware
       // The first asyncLocalStorage.run argument is the initialization of the store state
       // the second argument is the function that has access to that store
       return app.asyncLocalStorage.run(store, async () => {
-        const transactionId = v4();
+        const transactionId = v4().replace(/-/g, '');
         ctx[X_TRANSACTION_ID] = transactionId;
         store[X_TRANSACTION_ID] = transactionId;
         ctx.set(X_TRANSACTION_ID, transactionId);
 
         const requestId = ctx.get(X_REQUEST_ID);
         if (requestId) {
+          ctx[X_REQUEST_ID] = requestId;
           store[X_REQUEST_ID] = requestId;
         }
 

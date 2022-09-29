@@ -6,21 +6,21 @@ import '@midwayjs/logger';
 import '@midwayjs/core';
 import '@midwayjs/koa';
 import { AsyncLocalStorage } from 'async_hooks';
-import { X_TRANSACTION_ID } from '../src/share/constant';
+import { X_TRANSACTION_ID, X_REQUEST_ID } from '../src/share/constant';
 
 declare module '@midwayjs/core' {
   interface Context {
     [X_TRANSACTION_ID]: string;
+    [X_REQUEST_ID]?: string;
   }
 
   interface IMidwayBaseApplication {
     asyncLocalStorage: AsyncLocalStorage<{ [index: string | symbol]: any }>;
+    getTransactionInfo(): { transactionId: string; requestId?: string };
   }
 }
 
-declare module '@midwayjs/logger' {
-  
-}
+declare module '@midwayjs/logger' {}
 
 declare global {
   type RenderType = 'csr' | 'ssr';
