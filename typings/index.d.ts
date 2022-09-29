@@ -6,6 +6,8 @@ import '@midwayjs/logger';
 import '@midwayjs/core';
 import '@midwayjs/koa';
 import { AsyncLocalStorage } from 'async_hooks';
+import IoRedis from 'ioredis';
+
 import { X_TRANSACTION_ID, X_REQUEST_ID } from '../src/share/constant';
 
 declare module '@midwayjs/core' {
@@ -17,6 +19,7 @@ declare module '@midwayjs/core' {
   interface IMidwayBaseApplication {
     asyncLocalStorage: AsyncLocalStorage<{ [index: string | symbol]: any }>;
     getTransactionInfo(): { transactionId: string; requestId?: string };
+    redis: IoRedis;
   }
 }
 

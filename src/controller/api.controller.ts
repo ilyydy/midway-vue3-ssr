@@ -5,6 +5,7 @@ import {
   Post,
   Body,
   Headers,
+  App,
 } from '@midwayjs/decorator';
 import { Validate } from '@midwayjs/validate';
 
@@ -12,13 +13,16 @@ import { API_ROUTE_PREFIX } from '../share/constant';
 import { Base } from './base';
 import { Obj1DTO } from '../dto/obj1';
 
-import type { Context } from '@midwayjs/koa';
+import type { Context, Application } from '@midwayjs/koa';
 import type { ILogger } from '@midwayjs/logger';
 
 @Controller(API_ROUTE_PREFIX)
 export class APIController extends Base {
   @Inject()
   ctx: Context;
+
+  @App()
+  app: Application;
 
   @Inject()
   logger: ILogger;
@@ -40,6 +44,19 @@ export class APIController extends Base {
   @Validate()
   async validateJson(@Body() body: Obj1DTO) {
     return { success: true, message: 'OK', data: body };
+  }
+
+  @Get('/redis')
+  async redis() {
+    const key = 'a';
+
+    const r1 = await this.app.redis.get(key);
+    const r2 = await this.app.redis.setex(key, 15, 'zc');
+    const r3 = await this.app.redis.get(key);
+    // const r4 = await this.redisInstance.del(key);
+
+    const data = { r1, r2, r3 };
+    return Base.successResp({ data });
   }
 
   @Get('/log')

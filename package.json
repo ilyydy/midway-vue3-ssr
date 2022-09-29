@@ -10,6 +10,7 @@
     "@midwayjs/info": "^3.0.0",
     "@midwayjs/koa": "^3.0.0",
     "@midwayjs/logger": "^2.14.0",
+    "@midwayjs/redis": "^3.5.3",
     "@midwayjs/static-file": "^3.5.3",
     "@midwayjs/validate": "^3.0.0",
     "pinia": "^2.0.21",

@@ -1,24 +1,27 @@
-import { Configuration, App, Logger } from '@midwayjs/decorator';
+import { Configuration, App, Logger, Inject } from '@midwayjs/decorator';
 import * as koa from '@midwayjs/koa';
 import * as validate from '@midwayjs/validate';
 import * as info from '@midwayjs/info';
 import { join } from 'path';
 import * as staticFile from '@midwayjs/static-file';
 import { AsyncLocalStorage } from 'async_hooks';
+import * as redis from '@midwayjs/redis';
 
 import { filterList } from './filter';
 import { middlewares } from './middleware';
 import { getOrCreateViteServer } from './lib/vite.server';
 import { isDev } from './lib/util';
+import { createProxyInstance } from './lib/redis';
 import { X_REQUEST_ID, X_TRANSACTION_ID } from './share/constant';
 
 import type { ILogger } from '@midwayjs/logger';
-import type { ILifeCycle } from '@midwayjs/core';
+import type { ILifeCycle, IMidwayContainer } from '@midwayjs/core';
 
 @Configuration({
   imports: [
     koa,
     validate,
+    redis,
     {
       component: info,
       enabledEnvironment: ['local'],
@@ -37,7 +40,10 @@ export class ContainerLifeCycle implements ILifeCycle {
   @Logger()
   logger: ILogger;
 
-  async onReady() {
+  @Inject()
+  redisServiceFactory: redis.RedisServiceFactory;
+
+  async onReady(applicationContext: IMidwayContainer) {
     // add middleware
     this.app.useMiddleware(middlewares);
     // add filter
@@ -51,6 +57,10 @@ export class ContainerLifeCycle implements ILifeCycle {
         requestId: store[X_REQUEST_ID],
       };
     };
+
+    const redis = this.redisServiceFactory.get();
+    const proxyRedis = createProxyInstance(redis, this.logger);
+    this.app.redis = proxyRedis;
   }
 
   async onServerReady(): Promise<void> {
