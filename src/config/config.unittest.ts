@@ -4,4 +4,4 @@ export default {
   koa: {
     port: null,
   },
-} as MidwayConfig;
+} as any as MidwayConfig;

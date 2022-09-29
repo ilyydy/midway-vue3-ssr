@@ -37,7 +37,7 @@ export async function getOrCreateViteServer(app: Application) {
   const koaConnect = await import('koa-connect');
   // 以中间件模式创建 Vite 应用，这将禁用 Vite 自身的 HTML 服务逻辑
   // 并让上层服务器（也即 midway 服务）接管控制
-  app.use(koaConnect(viteServer.middlewares));
+  app.use(koaConnect.default(viteServer.middlewares));
 
   return viteServer;
 }
