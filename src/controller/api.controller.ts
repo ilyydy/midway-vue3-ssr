@@ -6,9 +6,11 @@ import {
   Body,
   Headers,
 } from '@midwayjs/decorator';
+import { Validate } from '@midwayjs/validate';
 
 import { API_ROUTE_PREFIX } from '../share/constant';
 import { Base } from './base';
+import { Obj1DTO } from '../dto/obj1';
 
 import type { Context } from '@midwayjs/koa';
 import type { ILogger } from '@midwayjs/logger';
@@ -32,6 +34,12 @@ export class APIController extends Base {
     this.logger.info('request headers %j', headers);
 
     return Base.successResp({});
+  }
+
+  @Post('/validateJson')
+  @Validate()
+  async validateJson(@Body() body: Obj1DTO) {
+    return { success: true, message: 'OK', data: body };
   }
 
   @Get('/log')
