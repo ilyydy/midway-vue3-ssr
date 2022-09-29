@@ -1,4 +1,5 @@
 import { join } from 'path';
+
 import {
   STATIC_RESOURCE_ROUTE_PREFIX,
   FRONT_BUILD_DIR_NAME,

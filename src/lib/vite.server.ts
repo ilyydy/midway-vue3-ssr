@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import * as constant from './share/constant';
+import * as constant from '../share/constant';
 
 import type { Application, Context } from '@midwayjs/koa';
 // vite 是 dev 依赖，生产环境不存在，所以用 import type 形式

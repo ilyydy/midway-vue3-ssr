@@ -1,6 +1,6 @@
 import { Controller, Get, Inject, ContentType } from '@midwayjs/decorator';
 
-import { render } from '../vite.server';
+import { render } from '../lib/vite.server';
 import { VIEW_ROUTE_PREFIX } from '../share/constant';
 
 import type { Context } from '@midwayjs/koa';

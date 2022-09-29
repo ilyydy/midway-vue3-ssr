@@ -9,7 +9,7 @@ import { AsyncLocalStorage } from 'async_hooks';
 import { DefaultErrorFilter } from './filter/default.filter';
 import { NotFoundFilter } from './filter/notfound.filter';
 import { middlewares } from './middleware';
-import { getOrCreateViteServer } from './vite.server';
+import { getOrCreateViteServer } from './lib/vite.server';
 
 import type { ILogger } from '@midwayjs/logger';
 import type { ILifeCycle } from '@midwayjs/core';
