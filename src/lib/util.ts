@@ -4,17 +4,12 @@ import { getCurrentApplicationContext } from '@midwayjs/core';
 
 import { RESPONSE_CODE, CODE_MESSAGES } from '../constant/code';
 import {
-  X_RESPONSE_TIME,
   CONTENT_TYPE,
   CONTENT_DISPOSITION,
   CONTENT_TYPE_MAP,
 } from '../share/constant';
 
 import type { Context } from '@midwayjs/koa';
-
-export function setRespTime(ctx: Context) {
-  ctx.set(X_RESPONSE_TIME, `${Date.now() - ctx.startTime}ms`);
-}
 
 export function jsonStringifyReplacerFactory(maxLen: number) {
   return function jsonStringifyReplacer(k: any, v: any) {
