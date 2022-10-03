@@ -6,6 +6,7 @@ import { join } from 'path';
 import * as staticFile from '@midwayjs/static-file';
 import { AsyncLocalStorage } from 'async_hooks';
 import * as redis from '@midwayjs/redis';
+import * as typeorm from '@midwayjs/typeorm';
 
 import { filterList } from './filter';
 import { middlewares } from './middleware';
@@ -22,6 +23,7 @@ import type { ILifeCycle, IMidwayContainer } from '@midwayjs/core';
     koa,
     validate,
     redis,
+    typeorm,
     {
       component: info,
       enabledEnvironment: ['local'],
@@ -43,12 +45,10 @@ export class ContainerLifeCycle implements ILifeCycle {
   @Inject()
   redisServiceFactory: redis.RedisServiceFactory;
 
-  async onReady(applicationContext: IMidwayContainer) {
-    // add middleware
-    this.app.useMiddleware(middlewares);
-    // add filter
-    this.app.useFilter(filterList);
+  @Config('typeorm')
+  typeormConfig: typeorm.typeormConfigOptions;
 
+  async onConfigLoad(applicationContext: IMidwayContainer) {
     this.app.asyncLocalStorage = new AsyncLocalStorage();
     this.app.getTransactionInfo = () => {
       const store = this.app.asyncLocalStorage.getStore() || {};
@@ -57,6 +57,21 @@ export class ContainerLifeCycle implements ILifeCycle {
         requestId: store[X_REQUEST_ID],
       };
     };
+
+    const { dataSource } = this.typeormConfig;
+    if (dataSource) {
+      const typeORMLogger = applicationContext.get(TypeORMLogger);
+      Object.values(dataSource).forEach(i => {
+        (i as any).logger = typeORMLogger;
+      });
+    }
+  }
+
+  async onReady(applicationContext: IMidwayContainer) {
+    // add middleware
+    this.app.useMiddleware(middlewares);
+    // add filter
+    this.app.useFilter(filterList);
 
     const redis = this.redisServiceFactory.get();
     const proxyRedis = createProxyInstance(redis, this.logger);

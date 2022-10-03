@@ -12,6 +12,7 @@ import { Validate } from '@midwayjs/validate';
 import { API_ROUTE_PREFIX } from '../share/constant';
 import { Base } from './base';
 import { Obj1DTO } from '../dto/obj1';
+import { T1Service } from '../service/mysql/t1';
 
 import type { Context, Application } from '@midwayjs/koa';
 import type { ILogger } from '@midwayjs/logger';
@@ -26,6 +27,9 @@ export class APIController extends Base {
 
   @Inject()
   logger: ILogger;
+
+  @Inject()
+  t1Service: T1Service;
 
   @Get('/json')
   async getJson() {
@@ -44,6 +48,15 @@ export class APIController extends Base {
   @Validate()
   async validateJson(@Body() body: Obj1DTO) {
     return { success: true, message: 'OK', data: body };
+  }
+
+  @Get('/mysql')
+  async getMysql() {
+    const addRes = await this.t1Service.addT1();
+    this.logger.info('add res %j', addRes);
+    const findRes = await this.t1Service.findT1();
+    await this.t1Service.updateT1(findRes.id);
+    return Base.successResp({ data: { findRes } });
   }
 
   @Get('/redis')

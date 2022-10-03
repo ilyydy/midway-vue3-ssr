@@ -44,6 +44,30 @@ export default (appInfo: MidwayAppInfo) => {
       },
     },
 
+    typeorm: {
+      dataSource: {
+        default: {
+          type: 'mysql',
+          host: 'localhost',
+          port: 3306,
+          username: 'tom',
+          password: '123456mysql',
+          database: 'd1',
+          synchronize: false, // 如果第一次使用，不存在表，有同步的需求可以写 true
+          logging: true,
+          maxQueryExecutionTime: 1000,
+
+          /**
+           * 配置实体模型，以 initDataSource 方法的第二个参数(baseDir)作为相对路径查找
+           * @see https://midwayjs.org/docs/data_source#2%E7%9B%AE%E5%BD%95%E6%89%AB%E6%8F%8F%E5%85%B3%E8%81%94%E5%AE%9E%E4%BD%93
+           * @see https://github.com/midwayjs/midway/blob/v3.4.5/packages/typeorm/src/dataSourceManager.ts#L27
+           * @see https://midwayjs.org/docs/deployment#%E9%83%A8%E7%BD%B2%E5%90%8E%E5%92%8C%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%9A%84%E5%8C%BA%E5%88%AB
+           */
+          entities: ['/mysqlEntity'],
+        },
+      },
+    },
+
     redis: {
       client: {
         keyPrefix: 'zc:test:',
