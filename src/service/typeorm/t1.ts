@@ -2,7 +2,7 @@ import { Provide, Inject, sleep } from '@midwayjs/decorator';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Not, Repository } from 'typeorm';
 
-import { T1 } from '../../mysqlEntity/t1';
+import { T1 } from '../../typeormEntity/t1';
 
 import type { ILogger } from '@midwayjs/logger';
 

@@ -12,7 +12,7 @@ import { Validate } from '@midwayjs/validate';
 import { API_ROUTE_PREFIX } from '../share/constant';
 import { Base } from './base';
 import { Obj1DTO } from '../dto/obj1';
-import { T1Service } from '../service/mysql/t1';
+import { T1Service } from '../service/typeorm/t1';
 
 import type { Context, Application } from '@midwayjs/koa';
 import type { ILogger } from '@midwayjs/logger';

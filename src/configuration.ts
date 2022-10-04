@@ -14,6 +14,7 @@ import { getOrCreateViteServer } from './lib/vite.server';
 import { isDev } from './lib/util';
 import { createProxyInstance } from './lib/redis';
 import { X_REQUEST_ID, X_TRANSACTION_ID } from './share/constant';
+import { TypeORMLogger } from './service/typeorm/typeormLogger';
 
 import type { ILogger } from '@midwayjs/logger';
 import type { ILifeCycle, IMidwayContainer } from '@midwayjs/core';
