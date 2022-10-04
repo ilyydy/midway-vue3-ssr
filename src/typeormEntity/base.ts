@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import _ from 'lodash';
+
 import IdGenerator from '../lib/IdGenerator';
 
 export const idGenerator = new IdGenerator(

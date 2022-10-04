@@ -12,7 +12,8 @@ import { Validate } from '@midwayjs/validate';
 import { API_ROUTE_PREFIX } from '../share/constant';
 import { Base } from './base';
 import { Obj1DTO } from '../dto/obj1';
-import { T1Service } from '../service/typeorm/t1';
+import { T1Service as TypeormT1Service } from '../service/typeorm/t1';
+import { T1Service as MikroT1Service } from '../service/mikroorm/t1';
 
 import type { Context, Application } from '@midwayjs/koa';
 import type { ILogger } from '@midwayjs/logger';
@@ -29,7 +30,10 @@ export class APIController extends Base {
   logger: ILogger;
 
   @Inject()
-  t1Service: T1Service;
+  typeormT1Service: TypeormT1Service;
+
+  @Inject()
+  mikroT1Service: MikroT1Service;
 
   @Get('/json')
   async getJson() {
@@ -50,12 +54,20 @@ export class APIController extends Base {
     return { success: true, message: 'OK', data: body };
   }
 
-  @Get('/mysql')
-  async getMysql() {
-    const addRes = await this.t1Service.addT1();
+  @Get('/typeorm')
+  async getTypeorm() {
+    const addRes = await this.typeormT1Service.addT1();
     this.logger.info('add res %j', addRes);
-    const findRes = await this.t1Service.findT1();
-    await this.t1Service.updateT1(findRes.id);
+    const findRes = await this.typeormT1Service.findT1();
+    await this.typeormT1Service.updateT1(findRes.id);
+    return Base.successResp({ data: { findRes } });
+  }
+
+  @Get('/mikroorm')
+  async getMikroorm() {
+    await this.mikroT1Service.addT1();
+    const findRes = await this.mikroT1Service.findT1();
+    if (findRes) await this.mikroT1Service.updateT1(findRes);
     return Base.successResp({ data: { findRes } });
   }
 

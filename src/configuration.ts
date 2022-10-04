@@ -13,6 +13,7 @@ import * as staticFile from '@midwayjs/static-file';
 import { AsyncLocalStorage } from 'async_hooks';
 import * as redis from '@midwayjs/redis';
 import * as typeorm from '@midwayjs/typeorm';
+import * as mikro from '@midwayjs/mikro';
 
 import { filterList } from './filter';
 import { middlewares } from './middleware';
@@ -31,6 +32,7 @@ import type { ILifeCycle, IMidwayContainer } from '@midwayjs/core';
     validate,
     redis,
     typeorm,
+    mikro,
     {
       component: info,
       enabledEnvironment: ['local'],
@@ -55,6 +57,9 @@ export class ContainerLifeCycle implements ILifeCycle {
   @Config('typeorm')
   typeormConfig: typeorm.typeormConfigOptions;
 
+  @Config('mikro')
+  mikroConfig: mikro.MikroConfigOptions;
+
   async onConfigLoad(applicationContext: IMidwayContainer) {
     this.app.asyncLocalStorage = new AsyncLocalStorage();
     this.app.getTransactionInfo = () => {
@@ -70,6 +75,12 @@ export class ContainerLifeCycle implements ILifeCycle {
       const typeORMLogger = applicationContext.get(TypeORMLogger);
       Object.values(dataSource).forEach(i => {
         (i as any).logger = typeORMLogger;
+      });
+    }
+
+    if (this.mikroConfig.dataSource) {
+      Object.values(this.mikroConfig.dataSource).forEach(i => {
+        (i as any).logger = (msg: string) => this.logger.info(`mikro ${msg}`);
       });
     }
   }

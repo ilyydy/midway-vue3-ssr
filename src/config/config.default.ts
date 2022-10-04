@@ -3,6 +3,7 @@ import { getCurrentMainApp } from '@midwayjs/core';
 import path from 'path';
 
 import { X_REQUEST_ID, X_TRANSACTION_ID } from '../share/constant';
+import mikroEntities from '../mikroEntity';
 
 import type { MidwayConfig, MidwayAppInfo } from '@midwayjs/core';
 import type { Context } from '@midwayjs/koa';
@@ -63,7 +64,22 @@ export default (appInfo: MidwayAppInfo) => {
            * @see https://github.com/midwayjs/midway/blob/v3.4.5/packages/typeorm/src/dataSourceManager.ts#L27
            * @see https://midwayjs.org/docs/deployment#%E9%83%A8%E7%BD%B2%E5%90%8E%E5%92%8C%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%9A%84%E5%8C%BA%E5%88%AB
            */
-          entities: ['/mysqlEntity'],
+          entities: ['/typeormEntity'],
+        },
+      },
+    },
+
+    mikro: {
+      dataSource: {
+        default: {
+          entities: mikroEntities,
+          dbName: 'd1',
+          type: 'mysql',
+          host: 'localhost',
+          port: 3306,
+          user: 'tom',
+          password: '123456mysql',
+          debug: true,
         },
       },
     },
