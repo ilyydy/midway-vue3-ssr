@@ -21,6 +21,12 @@ export const SSR = 'ssr';
 export const X_TRANSACTION_ID = 'X-Transaction-Id';
 export const X_RESPONSE_TIME = 'X-Response-Time';
 export const X_REQUEST_ID = 'X-Request-Id';
+export const HTTP_METHOD_MAP = {
+  get: 'GET',
+  post: 'POST',
+  put: 'PUT',
+  delete: 'DELETE',
+} as const;
 
 export const CONTENT_DISPOSITION = 'content-disposition';
 export const CONTENT_LENGTH = 'content-length';

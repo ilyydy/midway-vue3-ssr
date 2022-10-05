@@ -17,6 +17,7 @@ import { MongoUserService } from '../service/mongo/user';
 import { T1Service as TypeormT1Service } from '../service/typeorm/t1';
 import { T1Service as MikroT1Service } from '../service/mikroorm/t1';
 
+import type { CurlService } from '../service/curl';
 import type { Context, Application } from '@midwayjs/koa';
 import type { ILogger } from '@midwayjs/logger';
 
@@ -40,9 +41,18 @@ export class APIController extends Base {
   @Inject()
   mongoUserService: MongoUserService;
 
+  @Inject()
+  curlService: CurlService;
+
   @Get('/json')
   async getJson() {
     return Base.successResp({});
+  }
+
+  @Get('/curl')
+  async getCurl() {
+    const data = await this.curlService.curlSelfJson();
+    return Base.successResp({ data });
   }
 
   @Post('/json')

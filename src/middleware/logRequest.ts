@@ -1,7 +1,11 @@
 import { Middleware } from '@midwayjs/decorator';
 
 import { jsonStringify, isTxtContentType } from '../lib/util';
-import { CONTENT_TYPE, CONTENT_LENGTH } from '../share/constant';
+import {
+  CONTENT_TYPE,
+  CONTENT_LENGTH,
+  HTTP_METHOD_MAP,
+} from '../share/constant';
 
 import type { IMiddleware } from '@midwayjs/core';
 import type { NextFunction, Context } from '@midwayjs/koa';
@@ -13,14 +17,17 @@ export class LogRequestMiddleware
   resolve() {
     return async (ctx: Context, next: NextFunction) => {
       const reqContentType = ctx.get(CONTENT_TYPE);
-      const reqBody = isTxtContentType(reqContentType)
-        ? jsonStringify(ctx.request.body)
-        : `${reqContentType} ${ctx.get(CONTENT_LENGTH)}`;
-      ctx.logger.info(
-        `${LogRequestMiddleware.getName()} request body ${reqBody} query ${jsonStringify(
-          ctx.query
-        )}`
-      );
+
+      let msg = `${LogRequestMiddleware.getName()} request `;
+      if (ctx.method !== HTTP_METHOD_MAP.get) {
+        const reqBody = isTxtContentType(reqContentType)
+          ? jsonStringify(ctx.request.body)
+          : `${reqContentType} ${ctx.get(CONTENT_LENGTH)}`;
+        msg += `body ${reqBody}`;
+      }
+      msg += `query ${jsonStringify(ctx.query)}`;
+
+      ctx.logger.info(msg);
       await next();
 
       const respContentType = ctx.response.get(CONTENT_TYPE);
