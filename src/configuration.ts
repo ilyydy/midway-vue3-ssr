@@ -27,6 +27,7 @@ import { TypeORMLogger } from './service/typeorm/typeormLogger';
 
 import type { ILogger } from '@midwayjs/logger';
 import type { ILifeCycle, IMidwayContainer } from '@midwayjs/core';
+import type { IDatabaseDriver } from '@mikro-orm/core';
 
 @Configuration({
   imports: [
@@ -61,7 +62,7 @@ export class ContainerLifeCycle implements ILifeCycle {
   typeormConfig: typeorm.typeormConfigOptions;
 
   @Config('mikro')
-  mikroConfig: mikro.MikroConfigOptions;
+  mikroConfig: mikro.MikroConfigOptions<IDatabaseDriver>;
 
   async onConfigLoad(applicationContext: IMidwayContainer) {
     this.app.asyncLocalStorage = new AsyncLocalStorage();
