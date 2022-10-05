@@ -1,5 +1,5 @@
-import { createApp } from "./main";
-import { CSR, SSR } from "@share/constant";
+import { createApp } from './main';
+import { CSR, SSR } from '@share/constant';
 
 let renderType = window.__renderType;
 if (renderType !== CSR && renderType !== SSR) {
@@ -17,7 +17,7 @@ if (window.__pinia) {
 
 // 路由加载完成后在挂载
 router.isReady().then(() => {
-  app.mount("#app");
+  app.mount('#app');
 });
 
 export {};

@@ -1,7 +1,7 @@
 // 创建 app，在服务端和客户端间共享
 import { createSSRApp, createApp as createCSRApp } from 'vue';
 import { createPinia } from 'pinia';
-import { SSR } from "@share/constant";
+import { SSR } from '@share/constant';
 
 import App from './App.vue';
 import { createRouter } from './router';

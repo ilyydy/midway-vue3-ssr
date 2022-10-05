@@ -1,13 +1,13 @@
-import { renderToString } from "vue/server-renderer";
-import { basename } from "path";
+import { renderToString } from 'vue/server-renderer';
+import { basename } from 'path';
 
-import { createApp } from "./main";
+import { createApp } from './main';
 
-import type { RouteLocationRaw } from "vue-router";
+import type { RouteLocationRaw } from 'vue-router';
 
 // 该函数被服务端调用，创建 app，进行路由跳转，渲染 HTML 为字符串，获取需要预加载的各类资源，一起交给服务端进行渲染
 export async function render(
-  to: RouteLocationRaw,  // 要跳转的路由
+  to: RouteLocationRaw, // 要跳转的路由
   manifest: Record<string, string[]>
 ) {
   const { app, router, pinia } = createApp();
@@ -29,10 +29,10 @@ export async function render(
   const preloadLinks = renderPreloadLinks(ctx.modules, manifest);
 
   const response = {
-    html,  // 渲染为字符串的 html
+    html, // 渲染为字符串的 html
     preloadLinks, // 需要预加载的各类资源
-    pinia: JSON.stringify(pinia.state.value),  // 将 pinia 已有的状态序列化，用于后面客户端激活
-    appInfo: {},  // 自行添加的字段，可用于放置一些固定的 app 信息，如 title，应用描述等，可在服务端渲染时加到页面上
+    pinia: JSON.stringify(pinia.state.value), // 将 pinia 已有的状态序列化，用于后面客户端激活
+    appInfo: {}, // 自行添加的字段，可用于放置一些固定的 app 信息，如 title，应用描述等，可在服务端渲染时加到页面上
   };
   return response;
 }
@@ -41,13 +41,13 @@ function renderPreloadLinks(
   modules: Set<string>,
   manifest: Record<string, string[]>
 ) {
-  let links = "";
+  let links = '';
   const seen = new Set();
 
-  modules.forEach((id) => {
+  modules.forEach(id => {
     const files = manifest[id];
     if (files) {
-      files.forEach((file) => {
+      files.forEach(file => {
         if (!seen.has(file)) {
           seen.add(file);
           const filename = basename(file);
@@ -66,22 +66,22 @@ function renderPreloadLinks(
 }
 
 function renderPreloadLink(file: string) {
-  if (file.endsWith(".js")) {
+  if (file.endsWith('.js')) {
     return `<link rel="modulepreload" crossorigin href="${file}">`;
-  } else if (file.endsWith(".css")) {
+  } else if (file.endsWith('.css')) {
     return ` <link rel="stylesheet" href="${file}">`;
-  } else if (file.endsWith(".woff")) {
+  } else if (file.endsWith('.woff')) {
     return ` <link rel="preload" href="${file}" as="font" type="font/woff" crossorigin>`;
-  } else if (file.endsWith(".woff2")) {
+  } else if (file.endsWith('.woff2')) {
     return ` <link rel="preload" href="${file}" as="font" type="font/woff2" crossorigin>`;
-  } else if (file.endsWith(".gif")) {
+  } else if (file.endsWith('.gif')) {
     return ` <link rel="preload" href="${file}" as="image" type="image/gif">`;
-  } else if (file.endsWith(".jpg") || file.endsWith(".jpeg")) {
+  } else if (file.endsWith('.jpg') || file.endsWith('.jpeg')) {
     return ` <link rel="preload" href="${file}" as="image" type="image/jpeg">`;
-  } else if (file.endsWith(".png")) {
+  } else if (file.endsWith('.png')) {
     return ` <link rel="preload" href="${file}" as="image" type="image/png">`;
   } else {
     // TODO
-    return "";
+    return '';
   }
 }
