@@ -3,6 +3,7 @@ import { getCurrentMainApp } from '@midwayjs/core';
 import path from 'path';
 
 import { X_REQUEST_ID, X_TRANSACTION_ID } from '../share/constant';
+import mongoEntities from '../mongoEntity';
 import mikroEntities from '../mikroEntity';
 
 import type { MidwayConfig, MidwayAppInfo } from '@midwayjs/core';
@@ -80,6 +81,23 @@ export default (appInfo: MidwayAppInfo) => {
           user: 'tom',
           password: '123456mysql',
           debug: true,
+        },
+      },
+    },
+
+    mongoose: {
+      dataSource: {
+        default: {
+          uri: 'mongodb://localhost:27017/test',
+          options: {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            user: 'myTester',
+            pass: 'myTester',
+            loggerLevel: 'debug',
+          },
+          // 关联实体
+          entities: mongoEntities,
         },
       },
     },

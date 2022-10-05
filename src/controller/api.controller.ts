@@ -6,12 +6,14 @@ import {
   Body,
   Headers,
   App,
+  sleep,
 } from '@midwayjs/decorator';
 import { Validate } from '@midwayjs/validate';
 
 import { API_ROUTE_PREFIX } from '../share/constant';
 import { Base } from './base';
 import { Obj1DTO } from '../dto/obj1';
+import { MongoUserService } from '../service/mongo/user';
 import { T1Service as TypeormT1Service } from '../service/typeorm/t1';
 import { T1Service as MikroT1Service } from '../service/mikroorm/t1';
 
@@ -34,6 +36,9 @@ export class APIController extends Base {
 
   @Inject()
   mikroT1Service: MikroT1Service;
+
+  @Inject()
+  mongoUserService: MongoUserService;
 
   @Get('/json')
   async getJson() {
@@ -69,6 +74,18 @@ export class APIController extends Base {
     const findRes = await this.mikroT1Service.findT1();
     if (findRes) await this.mikroT1Service.updateT1(findRes);
     return Base.successResp({ data: { findRes } });
+  }
+
+  @Get('/mongo')
+  async getMongo() {
+    const addRes = await this.mongoUserService.create();
+    const findRes = await this.mongoUserService.find();
+    if (findRes) {
+      await sleep(1000);
+      const updateRes = await this.mongoUserService.update(findRes._id);
+      this.logger.info('update res %j', updateRes);
+    }
+    return Base.successResp({ data: { addRes, findRes } });
   }
 
   @Get('/redis')

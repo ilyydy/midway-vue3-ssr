@@ -12,8 +12,10 @@ import { join } from 'path';
 import * as staticFile from '@midwayjs/static-file';
 import { AsyncLocalStorage } from 'async_hooks';
 import * as redis from '@midwayjs/redis';
+import * as typegoose from '@midwayjs/typegoose';
 import * as typeorm from '@midwayjs/typeorm';
 import * as mikro from '@midwayjs/mikro';
+import mongoose from 'mongoose';
 
 import { filterList } from './filter';
 import { middlewares } from './middleware';
@@ -31,6 +33,7 @@ import type { ILifeCycle, IMidwayContainer } from '@midwayjs/core';
     koa,
     validate,
     redis,
+    typegoose,
     typeorm,
     mikro,
     {
@@ -83,6 +86,12 @@ export class ContainerLifeCycle implements ILifeCycle {
         (i as any).logger = (msg: string) => this.logger.info(`mikro ${msg}`);
       });
     }
+
+    mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
+      this.logger.info(
+        `mongo ${collectionName}.${methodName} ${JSON.stringify(methodArgs)}`
+      );
+    });
   }
 
   async onReady(applicationContext: IMidwayContainer) {
