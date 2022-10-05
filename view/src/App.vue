@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
 import HelloWorld from '@/components/HelloWorld.vue';
+import { useGetJson, downloadFile2, downloadFile3 } from '@/service/test';
+
+const { data, request: getJson, loading } = useGetJson();
+const downloadFile1 = (type: 'txt' | 'img') => window.open(`/api/${type}File`);
 </script>
 
 <template>
@@ -20,6 +24,27 @@ import HelloWorld from '@/components/HelloWorld.vue';
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
+
+      <div>
+        <button @click="getJson">getJson</button>
+        <div>loading: {{ loading }}</div>
+        <div>data: {{ data || '-' }}</div>
+      </div>
+
+      <div>
+        <button @click="() => downloadFile1('txt')">downloadTxtFile1</button>
+        <button @click="() => downloadFile1('img')">downloadImgFile1</button>
+      </div>
+
+      <div>
+        <button @click="() => downloadFile2('txt')">downloadTxtFile2</button>
+        <button @click="() => downloadFile2('img')">downloadImgFile2</button>
+      </div>
+
+      <div>
+        <button @click="() => downloadFile3('txt')">downloadTxtFile3</button>
+        <button @click="() => downloadFile3('img')">downloadImgFile3</button>
+      </div>
     </div>
   </header>
 

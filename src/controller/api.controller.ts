@@ -9,6 +9,7 @@ import {
   sleep,
 } from '@midwayjs/decorator';
 import { Validate } from '@midwayjs/validate';
+import { promises as fsPromises, createReadStream } from 'node:fs';
 
 import { API_ROUTE_PREFIX } from '../share/constant';
 import { Base } from './base';
@@ -16,6 +17,7 @@ import { Obj1DTO } from '../dto/obj1';
 import { MongoUserService } from '../service/mongo/user';
 import { T1Service as TypeormT1Service } from '../service/typeorm/t1';
 import { T1Service as MikroT1Service } from '../service/mikroorm/t1';
+import { setDownloadHeader } from '../lib/util';
 
 import type { CurlService } from '../service/curl';
 import type { Context, Application } from '@midwayjs/koa';
@@ -46,7 +48,7 @@ export class APIController extends Base {
 
   @Get('/json')
   async getJson() {
-    return Base.successResp({});
+    return Base.successResp({ data: 'ok' });
   }
 
   @Get('/curl')
@@ -67,6 +69,22 @@ export class APIController extends Base {
   @Validate()
   async validateJson(@Body() body: Obj1DTO) {
     return { success: true, message: 'OK', data: body };
+  }
+
+  @Get('/txtFile')
+  async textFile() {
+    setDownloadHeader(this.ctx, 'abc.md');
+    // setDownloadHeader(this.ctx, '天天红发送饕+$%&45!~ 餮.md');
+    return fsPromises.readFile('./README.md');
+    // return {a:1}
+  }
+
+  @Get('/imgFile')
+  async imgFile() {
+    setDownloadHeader(this.ctx, '天天红发送饕+$%&45!~ 餮.jpg');
+    // return fsPromises.readFile('./test/1.jpg');
+    this.ctx.body = createReadStream('./test/1.jpg');
+    // return {a:1}
   }
 
   @Get('/typeorm')
