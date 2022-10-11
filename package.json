@@ -30,6 +30,8 @@
     "vue-router": "^4.1.5"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
     "@midwayjs/cli": "^1.2.90",
     "@midwayjs/cli-plugin-swc": "^1.3.13",
     "@midwayjs/mock": "^3.0.0",
@@ -46,6 +48,7 @@
     "@vue/eslint-config-typescript": "^11.0.0",
     "@vue/tsconfig": "^0.1.3",
     "cross-env": "^6.0.0",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.22.0",
     "eslint-plugin-vue": "^9.3.0",
     "husky": "^8.0.1",
@@ -86,7 +89,8 @@
     "lint:view:fix": "eslint view -c ./view/.eslintrc.cjs --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
     "clean": "midway-bin clean",
     "prepare": "husky install",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "cm": "cz"
   },
   "midway-bin-clean": [
     ".vscode/.tsbuildinfo",
@@ -95,13 +99,22 @@
     "logs"
   ],
   "lint-staged": {
-    "src/**/*": ["mwts fix"],
-    "view/**/*": ["eslint -c ./view/.eslintrc.cjs --fix"]
+    "src/**/*": [
+      "mwts fix"
+    ],
+    "view/**/*": [
+      "eslint -c ./view/.eslintrc.cjs --fix"
+    ]
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/ilyydy/midway-vue3-ssr"
   },
   "author": "zhangchi@bigo.sg",
-  "license": "MIT"
+  "license": "MIT",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }
