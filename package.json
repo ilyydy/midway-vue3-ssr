@@ -48,8 +48,10 @@
     "cross-env": "^6.0.0",
     "eslint": "^8.22.0",
     "eslint-plugin-vue": "^9.3.0",
+    "husky": "^8.0.1",
     "jest": "^26.4.0",
     "koa-connect": "^2.1.0",
+    "lint-staged": "^13.0.3",
     "mwts": "^1.0.5",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.7.1",
@@ -69,7 +71,9 @@
     "test": "midway-bin test --ts",
     "cov": "midway-bin cov --ts",
     "lint": "run-p lint:midway lint:view",
-    "lint:midway": "mwts fix",
+    "lint:fix": "run-p lint:midway:fix lint:view:fix",
+    "lint:midway": "mwts lint",
+    "lint:midway:fix": "mwts fix",
     "ci": "npm run cov",
     "dev:view": "vite view",
     "preview:view": "vite view preview --port 4173",
@@ -78,8 +82,11 @@
     "build:view:client": "vite build view --outDir ../public/client --ssrManifest",
     "build:view:server": "vite build view --outDir ../public/server --ssr src/server",
     "type-check": "vue-tsc -p view/tsconfig.json --noEmit",
-    "lint:view": "eslint view -c ./view/.eslintrc.cjs --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
-    "clean": "midway-bin clean"
+    "lint:view": "eslint view -c ./view/.eslintrc.cjs --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --max-warnings 0",
+    "lint:view:fix": "eslint view -c ./view/.eslintrc.cjs --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "clean": "midway-bin clean",
+    "prepare": "husky install",
+    "lint-staged": "lint-staged"
   },
   "midway-bin-clean": [
     ".vscode/.tsbuildinfo",
@@ -87,6 +94,10 @@
     "public",
     "logs"
   ],
+  "lint-staged": {
+    "src/**/*": ["mwts fix"],
+    "view/**/*": ["eslint -c ./view/.eslintrc.cjs --fix"]
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ilyydy/midway-vue3-ssr"

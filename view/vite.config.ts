@@ -7,6 +7,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 import { STATIC_RESOURCE_ROUTE_PREFIX } from '../src/share/constant';
 
 // https://vitejs.dev/config/
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default defineConfig(({ command, mode, ssrBuild }) => ({
   base: STATIC_RESOURCE_ROUTE_PREFIX + '/',
   build: {
