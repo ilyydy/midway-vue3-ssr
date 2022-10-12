@@ -1,4 +1,4 @@
-import { Catch } from '@midwayjs/decorator';
+import { Catch } from '@midwayjs/core';
 import { HttpStatus } from '@midwayjs/core';
 
 import { BaseFilter } from './base';

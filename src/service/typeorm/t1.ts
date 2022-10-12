@@ -1,4 +1,4 @@
-import { Provide, Inject, sleep } from '@midwayjs/decorator';
+import { Provide, Inject, sleep } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Not, Repository } from 'typeorm';
 

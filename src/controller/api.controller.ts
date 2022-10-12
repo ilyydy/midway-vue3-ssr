@@ -7,7 +7,7 @@ import {
   Headers,
   App,
   sleep,
-} from '@midwayjs/decorator';
+} from '@midwayjs/core';
 import { Validate } from '@midwayjs/validate';
 import { promises as fsPromises, createReadStream } from 'node:fs';
 

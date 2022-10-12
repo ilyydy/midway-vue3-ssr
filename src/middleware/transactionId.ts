@@ -1,4 +1,4 @@
-import { Middleware } from '@midwayjs/decorator';
+import { Middleware } from '@midwayjs/core';
 import { v4 } from 'uuid';
 
 import { X_REQUEST_ID, X_TRANSACTION_ID } from '../share/constant';

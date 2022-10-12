@@ -1,5 +1,5 @@
 import { Logger as TypeORMLoggerInterface, QueryRunner } from 'typeorm';
-import { Provide, ScopeEnum, Scope, Logger } from '@midwayjs/decorator';
+import { Provide, ScopeEnum, Scope, Logger } from '@midwayjs/core';
 import { ILogger } from '@midwayjs/logger';
 
 @Provide('typeORMLogger')

@@ -1,4 +1,4 @@
-import { Middleware } from '@midwayjs/decorator';
+import { Middleware } from '@midwayjs/core';
 
 import { X_RESPONSE_TIME } from '../share/constant';
 

@@ -1,5 +1,5 @@
 import { makeHttpRequest, getCurrentApplicationContext } from '@midwayjs/core';
-import { Provide, Inject } from '@midwayjs/decorator';
+import { Provide, Inject } from '@midwayjs/core';
 import * as koa from '@midwayjs/koa';
 
 import { X_REQUEST_ID, X_TRANSACTION_ID } from '../share/constant';

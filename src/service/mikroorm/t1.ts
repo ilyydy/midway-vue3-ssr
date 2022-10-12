@@ -1,4 +1,4 @@
-import { Provide, Inject, sleep } from '@midwayjs/decorator';
+import { Provide, Inject, sleep } from '@midwayjs/core';
 import { InjectRepository } from '@midwayjs/mikro';
 import { QueryOrder, wrap } from '@mikro-orm/core';
 import { EntityRepository } from '@mikro-orm/mysql';

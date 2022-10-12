@@ -1,4 +1,4 @@
-import { Provide, Inject } from '@midwayjs/decorator';
+import { Provide, Inject } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 
 import { User } from '../../mongoEntity/user';

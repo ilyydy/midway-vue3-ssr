@@ -1,4 +1,4 @@
-import { Catch } from '@midwayjs/decorator';
+import { Catch } from '@midwayjs/core';
 import { MidwayValidationError } from '@midwayjs/validate';
 
 import { BaseFilter } from './base';
