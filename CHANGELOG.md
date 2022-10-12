@@ -44,6 +44,3 @@
 * 设置 transactionId，记录请求和响应 ([ef9aa15](https://github.com/ilyydy/midway-vue3-ssr/commit/ef9aa15))
 * 设置响应时间 ([39fb8c7](https://github.com/ilyydy/midway-vue3-ssr/commit/39fb8c7))
 * 重命名 ssr.md 为 SSR.md ([941f9b8](https://github.com/ilyydy/midway-vue3-ssr/commit/941f9b8))
-
-
-
