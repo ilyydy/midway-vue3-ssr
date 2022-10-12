@@ -1,3 +1,7 @@
+## [1.0.2](https://github.com/ilyydy/midway-vue3-ssr/compare/v1.0.1...v1.0.2) (2022-10-12)
+
+* doc: 自动生成 CHANGELOG.md ([dfb6d3c](https://github.com/ilyydy/midway-vue3-ssr/commit/dfb6d3c))
+
 ## <small>1.0.1 (2022-10-12)</small>
 
 * refactor: 升级依赖，优化代码 ([3551515](https://github.com/ilyydy/midway-vue3-ssr/commit/3551515))
