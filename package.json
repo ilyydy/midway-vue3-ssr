@@ -90,7 +90,9 @@
     "clean": "midway-bin clean",
     "prepare": "husky install",
     "lint-staged": "lint-staged",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "version": "npm run changelog && git add CHANGELOG.md",
+    "postversion": "git push origin v$npm_package_version"
   },
   "midway-bin-clean": [
     ".vscode/.tsbuildinfo",
