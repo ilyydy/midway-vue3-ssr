@@ -39,7 +39,6 @@ export class MongoUserService {
   }
 
   async update(_id: string) {
-    console.log(_id, 'id');
     const updateRes = await this.userModel.updateOne(
       {
         _id,
