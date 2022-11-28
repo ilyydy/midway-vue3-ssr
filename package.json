@@ -12,7 +12,7 @@
     "@midwayjs/logger": "2.17.0",
     "@midwayjs/static-file": "3.8.0",
     "@midwayjs/validate": "3.8.0",
-    "pinia": "2.0.26",
+    "pinia": "2.0.27",
     "vue": "3.2.45",
     "vue-router": "4.1.6"
   },
