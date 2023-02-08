@@ -8,7 +8,7 @@
     "@midwayjs/core": "3.10.6",
     "@midwayjs/decorator": "3.10.6",
     "@midwayjs/info": "3.10.6",
-    "@midwayjs/koa": "3.10.6",
+    "@midwayjs/koa": "3.10.7",
     "@midwayjs/logger": "2.17.0",
     "@midwayjs/static-file": "3.10.6",
     "@midwayjs/validate": "3.10.6",
