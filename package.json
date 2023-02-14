@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "dependencies": {
-    "@midwayjs/bootstrap": "3.10.9",
+    "@midwayjs/bootstrap": "3.10.10",
     "@midwayjs/core": "3.10.9",
     "@midwayjs/decorator": "3.10.9",
     "@midwayjs/info": "3.10.9",
