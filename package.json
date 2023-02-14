@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@midwayjs/cli": "2.0.11",
-    "@midwayjs/mock": "3.10.7",
+    "@midwayjs/mock": "3.10.9",
     "@rushstack/eslint-patch": "1.2.0",
     "@types/jest": "29.4.0",
     "@types/koa": "2.13.5",
