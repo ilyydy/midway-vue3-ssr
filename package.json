@@ -6,7 +6,7 @@
   "dependencies": {
     "@midwayjs/bootstrap": "3.10.9",
     "@midwayjs/core": "3.10.9",
-    "@midwayjs/decorator": "3.10.7",
+    "@midwayjs/decorator": "3.10.9",
     "@midwayjs/info": "3.10.7",
     "@midwayjs/koa": "3.10.7",
     "@midwayjs/logger": "2.17.0",
