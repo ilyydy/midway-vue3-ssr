@@ -10,7 +10,7 @@
     "@midwayjs/info": "3.10.10",
     "@midwayjs/koa": "3.10.10",
     "@midwayjs/logger": "2.17.0",
-    "@midwayjs/static-file": "3.10.10",
+    "@midwayjs/static-file": "3.10.11",
     "@midwayjs/validate": "3.10.11",
     "pinia": "2.0.30",
     "vue": "3.2.47",
