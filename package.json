@@ -11,7 +11,7 @@
     "@midwayjs/koa": "3.10.13",
     "@midwayjs/logger": "2.17.0",
     "@midwayjs/static-file": "3.10.15",
-    "@midwayjs/validate": "3.10.13",
+    "@midwayjs/validate": "3.10.15",
     "pinia": "2.0.32",
     "vue": "3.2.47",
     "vue-router": "4.1.6"
