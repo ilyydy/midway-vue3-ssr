@@ -7,7 +7,7 @@
     "@midwayjs/bootstrap": "3.10.10",
     "@midwayjs/core": "3.10.10",
     "@midwayjs/decorator": "3.10.10",
-    "@midwayjs/info": "3.10.14",
+    "@midwayjs/info": "3.10.15",
     "@midwayjs/koa": "3.10.15",
     "@midwayjs/logger": "2.17.0",
     "@midwayjs/static-file": "3.10.15",
