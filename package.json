@@ -20,7 +20,7 @@
     "@midwayjs/cli": "2.0.15",
     "@midwayjs/mock": "3.10.15",
     "@rushstack/eslint-patch": "1.2.0",
-    "@types/jest": "29.4.1",
+    "@types/jest": "29.5.0",
     "@types/koa": "2.13.5",
     "@types/node": "18.15.3",
     "@vitejs/plugin-vue": "4.0.0",
